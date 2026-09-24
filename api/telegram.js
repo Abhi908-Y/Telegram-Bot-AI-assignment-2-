@@ -4,7 +4,7 @@
 // Nothing is ever posted to LinkedIn automatically. Meera publishes herself.
 
 import { waitUntil } from "@vercel/functions";
-import { triage, draft } from "../lib/claude.js";
+import { triage, draft } from "../lib/gemini.js";
 import { sendText, answerCallback, removeButtons } from "../lib/telegram.js";
 
 const MEERA = () => process.env.MEERA_CHAT_ID;
@@ -115,7 +115,7 @@ export default async function handler(req, res) {
   }
 
   // Answer Telegram immediately (so it doesn't retry and create duplicate drafts),
-  // then keep working in the background while Claude writes the draft.
+  // then keep working in the background while Gemini writes the draft.
   waitUntil(
     route(req.body || {}).catch(async (err) => {
       console.error(err);

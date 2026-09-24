@@ -1,6 +1,6 @@
 # Meera's Content Bot
 
-Note posted in Telegram channel → Claude triages it → Claude drafts a LinkedIn post in Meera's voice → draft arrives in Meera's Telegram DM with Approve / Redraft / Kill buttons.
+Note posted in Telegram channel → Gemini triages it → Gemini drafts a LinkedIn post in Meera's voice → draft arrives in Meera's Telegram DM with Approve / Redraft / Kill buttons.
 
 Nothing is ever posted to LinkedIn automatically. Meera reviews, verifies flagged claims, and publishes herself.
 
@@ -8,18 +8,18 @@ Nothing is ever posted to LinkedIn automatically. Meera reviews, verifies flagge
 
 ```
 api/telegram.js        The webhook: receives Telegram updates and routes them
-lib/claude.js          Calls the Claude API (triage + drafting)
+lib/gemini.js          Calls the Gemini API (triage + drafting), with retries and backup models
 lib/telegram.js        Sends messages and handles buttons
 prompts/triage.txt     Decides develop vs park
 prompts/meera_voice.txt  Meera's voice (edit this to tune the writing)
-vercel.json            60-second time limit; bundles the prompts folder
+vercel.json            300-second time limit; bundles the prompts folder
 package.json
 ```
 
 ## Setup
 
-### 1. Get a Claude API key
-Sign in at console.anthropic.com, add billing, and create an API key under API Keys.
+### 1. Get a Gemini API key
+Sign in at https://aistudio.google.com/apikey and click Create API key. The free tier works; free models are sometimes busy, so the bot retries and falls back to backup models automatically.
 
 ### 2. Replace the files on GitHub
 Upload this whole folder to your `meera-bot` repo, replacing the old `api/telegram.js` and `package.json`. Keep the folder structure exactly as above.
@@ -31,8 +31,8 @@ Project → Settings → Environment Variables:
 |---|---|
 | `TELEGRAM_BOT_TOKEN` | already set |
 | `TELEGRAM_WEBHOOK_SECRET` | already set |
-| `ANTHROPIC_API_KEY` | your Claude API key |
-| `ANTHROPIC_MODEL` | optional; defaults to `claude-sonnet-5` |
+| `GEMINI_API_KEY` | your Gemini API key |
+| `GEMINI_MODEL` | optional; defaults to `gemini-3.5-flash` |
 | `MEERA_CHAT_ID` | added in step 5 |
 | `NOTES_CHANNEL_ID` | optional; added in step 6 |
 
@@ -54,7 +54,7 @@ A bot can only message people who have sent it `/start` first.
 Post anything in the channel, then open Vercel → Logs. You'll see `Channel post from chat id: -100…`. Add that number as `NOTES_CHANNEL_ID` and redeploy. After this, posts from any other channel the bot is in are ignored.
 
 ### 7. Test
-Post a real note in the channel. Within about 30–60 seconds, Meera's DM receives either:
+Post a real note in the channel. Within about 1–3 minutes, Meera's DM receives either:
 - **DRAFT**: score, category, three hook options, the post, claims to verify, and a one-line note, with buttons ✅ Approve / 🔁 Redraft / 🗑 Kill
 - **PARKED**: why it isn't strong enough, what would fix it, with buttons ✍️ Draft anyway / 🗑 Dismiss
 
