@@ -32,8 +32,13 @@ async function sendDraft(note, t, feedback = "", previous = "", label = "DRAFT")
   await sendText(MEERA(), `${header(label, note)}\n${output}`, DRAFT_BUTTONS);
 }
 
+// Sent straight away so Meera knows the note arrived; drafting takes 1-3 minutes.
+const ack = (text = "Got it - drafting your post now. This usually takes 1-3 minutes.") =>
+  sendText(MEERA(), text);
+
 // A new note arrived in the channel.
 async function handleNote(note) {
+  await ack();
   const t = await triage(note);
   if (t.decision === "develop") {
     await sendDraft(note, t, "", "", `DRAFT · score ${t.score}/10 · ${t.category}`);
@@ -59,6 +64,7 @@ async function handleButton(q) {
   if (!note) {
     return sendText(MEERA(), "I couldn't find the original note on that message.");
   }
+  if (q.data === "draft" || q.data === "redraft") await ack();
   if (q.data === "draft") {
     return sendDraft(note, await triage(note), "", "", "DRAFT (on your request)");
   }
@@ -74,6 +80,7 @@ async function handleFeedback(message) {
   if (!note) {
     return sendText(MEERA(), "Reply to the draft message that has the buttons, and I'll redraft it with your changes.");
   }
+  await ack("Got it - redrafting with your changes. This usually takes 1-3 minutes.");
   await sendDraft(note, await triage(note), message.text, replied.text, "REDRAFT (with your changes)");
 }
 
