@@ -25,7 +25,8 @@ Return ONLY a JSON object, with no preamble and no code fences:
   "core_point": "the one thing the post should make readers understand",
   "moment": "the real moment in the note, or empty string if none",
   "numbers": "specific numbers stated in the note, or empty string if none",
-  "missing": "what Meera would need to add to make the post strong (story, data, confirmation), or empty string"
+  "missing": "what Meera would need to add to make the post strong (story, data, confirmation), or empty string",
+  "search_queries": ["2 or 3 short Google News search phrases (3-6 words each) for the general, checkable topics in the note - industry practice, regulation, ingredient science, market trends. Never search for Skinstinct, Meera or private business details."]
 }
 
 Never invent facts. Only list moments and numbers that are actually in the note.
